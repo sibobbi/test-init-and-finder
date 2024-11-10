@@ -1,0 +1,17 @@
+{
+    "name": "burritos/test-task",
+    "autoload": {
+        "psr-4": {
+            "Burritos\\TestTask\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "VLadislav"
+        }
+    ],
+    "require": {
+        "fakerphp/faker": "^1.24",
+        "vlucas/phpdotenv": "^5.6"
+    }
+}
