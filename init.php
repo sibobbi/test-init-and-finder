@@ -4,10 +4,25 @@ require 'vendor/autoload.php';
 
 use Faker\Factory as Faker;
 use Dotenv\Dotenv;
+
+/**
+ * Класс Init для работы с базой данных MySQL.
+ * Содержит методы для создания таблицы, заполнения её данными и выборки данных.
+ *
+ * @final Запрещает наследование от этого класса.
+ */
 final class Init
 {
+    /**
+     * @var mysqli $conn Подключение к базе данных.
+     */
     private mysqli $conn;
 
+    /**
+     * Конструктор класса.
+     * Выполняет загрузку переменных окружения, подключение к базе данных,
+     * создание таблицы и её заполнение тестовыми данными.
+     */
     public function __construct()
     {
         $this->loadEnv();
@@ -16,11 +31,24 @@ final class Init
         $this->fill();
     }
 
+    /**
+     * Загрузка переменных окружения из файла .env.
+     * Использует библиотеку `vlucas/phpdotenv`.
+     *
+     * @return void
+     */
     private function loadEnv(): void
     {
         $dotenv = Dotenv::createImmutable(__DIR__);
         $dotenv->load();
     }
+
+    /**
+     * Устанавливает подключение к базе данных MySQL с использованием данных из .env файла.
+     * В случае ошибки подключения выводит сообщение об ошибке.
+     *
+     * @return void
+     */
     private function connect(): void
     {
         $host = $_ENV['DB_HOST'];
@@ -35,7 +63,12 @@ final class Init
         }
     }
 
-    private function create()
+    /**
+     * Создаёт таблицу `test` в базе данных, если она не существует.
+     *
+     * @return void
+     */
+    private function create(): void
     {
         $sql = "
         CREATE TABLE IF NOT EXISTS test (
@@ -54,11 +87,15 @@ final class Init
         }
     }
 
+    /**
+     * Заполняет таблицу `test` случайными данными с использованием библиотеки `Faker`.
+     * Вставляет 10 записей.
+     *
+     * @return void
+     */
     private function fill(): void
     {
         $faker = Faker::create();
-
-
         $recordCount = 10;
 
         $stmt = $this->conn->prepare("INSERT INTO test (name, normal, success) VALUES (?, ?, ?)");
@@ -85,6 +122,14 @@ final class Init
         $stmt->close();
     }
 
+    /**
+     * Выполняет поиск в таблице `test` по полям `normal` и `success`.
+     * Ищет записи, содержащие переданную строку `queryString`.
+     *
+     * @param string $queryString Строка для поиска.
+     *
+     * @return void
+     */
     public function get(string $queryString): void
     {
         $stmt = $this->conn->prepare("SELECT * FROM test WHERE normal LIKE ? OR success LIKE ?");
@@ -111,11 +156,17 @@ final class Init
         $stmt->close();
     }
 
+    /**
+     * Деструктор класса.
+     * Закрывает соединение с базой данных при уничтожении объекта.
+     */
     public function __destruct()
     {
         $this->conn->close();
     }
 }
 
+// Инициализация класса и выполнение поиска
 $init = new Init();
+
 $init->get('');
