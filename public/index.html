@@ -19,21 +19,22 @@
             cursor: pointer;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 
 <div class="button-container" id="buttonContainer">
-    <button onclick="rotateButtons()">1</button>
-    <button onclick="rotateButtons()">2</button>
-    <button onclick="rotateButtons()">3</button>
+    <button>1</button>
+    <button>2</button>
+    <button>3</button>
 </div>
 
 <script>
-    function rotateButtons() {
-        const container = document.getElementById('buttonContainer');
-        const firstButton = container.firstElementChild;
-        container.appendChild(firstButton);
-    }
+    $(document).ready(function() {
+        $('#buttonContainer button').on('click', function() {
+            $('#buttonContainer').append($('#buttonContainer button:first'));
+        });
+    });
 </script>
 
 </body>
