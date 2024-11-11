@@ -12,8 +12,8 @@ final class Init
     {
         $this->loadEnv();
         $this->connect();
-//        $this->create();
-//        $this->fill();
+        $this->create();
+        $this->fill();
     }
 
     private function loadEnv(): void
@@ -28,13 +28,11 @@ final class Init
         $password = $_ENV['DB_PASSWORD'];
         $dbname = $_ENV['DB_NAME'];
 
-
-        $this->conn = new mysqli($host, $username, $password, $dbname);
-
-        if ($this->conn->connect_error) {
-            die("Ошибка подключения: " . $this->conn->connect_error);
+        try {
+            $this->conn = new mysqli($host, $username, $password, $dbname);
+        } catch (Exception $ex) {
+            echo 'Ошибка подключения к БД: ' . $ex->getMessage();
         }
-        echo "Успешное подключение к базе данных!\n";
     }
 
     private function create()
@@ -49,14 +47,14 @@ final class Init
         );
         ";
 
-        if ($this->conn->query($sql) === TRUE) {
+        if ($this->conn->query($sql) === true) {
             echo "Таблица 'test' успешно создана!\n";
         } else {
             echo "Ошибка при создании таблицы: " . $this->conn->error;
         }
     }
 
-    private function fill()
+    private function fill(): void
     {
         $faker = Faker::create();
 
